@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--  Licensed to the .NET Foundation under one or more agreements. -->
+<!-- The .NET Foundation licenses this file to you under the MIT license. -->
+<html>
+	<head>
+		<title>wasm</title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="modulepreload" href="./cam.js" />
+		<link rel="modulepreload" href="./dotnet.js" />
+	</head>
+
+	<body>
+		<span id="out"></span>
+		<script type="module" src="./cam.js"></script>
+
+		<div class="canvasWrapper">
+			<video autoplay playsinline webkit-playsinline muted hidden id="videoelement"></video>
+			<canvas id="mainCanvas" class="canvasMain" width="250" height="250"> </canvas>
+			<canvas id="overlayCanvas" class="canvasOverlay" width="250" height="250"> </canvas>
+		</div>
+		<div>
+			<button id="saveBtn">Save</button>
+		</div>
+		<p id="counter">0</p>
+	</body>
+	<style>
+		.canvasWrapper {
+			position: relative;
+			height: 250px;
+			width: 250px;
+			max-width: 100%;
+		}
+		.canvasMain {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: lightblue;
+		}
+		.canvasOverlay{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</html>
