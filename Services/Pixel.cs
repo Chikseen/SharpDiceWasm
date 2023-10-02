@@ -1,5 +1,4 @@
 using System;
-using System.Reflection.Metadata;
 
 public class Pixel
 {
@@ -8,19 +7,12 @@ public class Pixel
 	public byte B = 0;
 	public byte A = 0;
 
-	public Pixel(byte[] chunk)
+	public Pixel(byte r, byte g, byte b, byte a)
 	{
-		if (chunk.Length == 4)
-		{
-			R = chunk[0];
-			G = chunk[1];
-			B = chunk[2];
-			A = chunk[3];
-		}
-		else
-		{
-			Console.WriteLine("WARNING: Chunk fault");
-		}
+		R = r;
+		G = g;
+		B = b;
+		A = a;
 	}
 
 	public byte[] GetByte()

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices.JavaScript;
 
 // I dont know why but this is the MAIN -> without it programm wont work DAFUQ
@@ -11,9 +12,13 @@ public partial class Main
 	{
 		try
 		{
+			Stopwatch toCompleteTimer = new Stopwatch();
+			toCompleteTimer.Start();
+
 			Image image = new(byteArray, (ushort)width);
-			//image.Print();
 			image.GetContrast();
+
+			Console.WriteLine($"All: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 			return image.GetByteArray();
 		}
 		catch (Exception e)

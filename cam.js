@@ -44,6 +44,9 @@ canvasInterval = window.setInterval(() => {
 }, 1000 / fps);
 
 ///////////////////////////////
+let framesPerSec = 0;
+let started = new Date();
+
 async function save() {
 	const canvas = document.getElementById("mainCanvas");
 	const canvasWidth = canvas.getBoundingClientRect().width;
@@ -65,5 +68,8 @@ async function save() {
 	overlayCtx.putImageData(imageData, 0, 0);
 
 	document.getElementById("counter").innerHTML = document.getElementById("counter").innerHTML * 1 + 1;
-	//setTimeout(save, 1);
+	framesPerSec++;
+	framesPerSec = ((new Date() - started) / framesPerSec).toFixed(0);
+	document.getElementById("fps").innerHTML = framesPerSec;
+	setTimeout(save, 1);
 }

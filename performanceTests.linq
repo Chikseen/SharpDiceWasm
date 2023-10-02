@@ -1,14 +1,39 @@
 <Query Kind="Program" />
 
+public int pi = 0;
+
 void Main()
 {
 	int size = 960000; // Real ByteArray example
 
 	//ArrayVsList(size);
 	//ArrayElemntAccessTime(size);
+	VarAccesingVSNewCalculation(size);
 }
 
-public void ArrayElemntAccessTime(int size) 
+public void VarAccesingVSNewCalculation(int size)
+{
+	int[] l = new int[size];
+
+	DateTime d1 = DateTime.Now;
+	for (int index = 0; index < size; index++)
+	{
+		var i = l.Length / 4;
+		i = 0;
+	}
+	Console.WriteLine("get length and calculate: " + (DateTime.Now.Ticks - d1.Ticks));
+
+	DateTime d2 = DateTime.Now;
+	pi = size / 4;
+	for (int index = 0; index < size; index++)
+	{
+		var i = pi;
+		i = 0;
+	}
+	Console.WriteLine("get obj prop: " + (DateTime.Now.Ticks - d2.Ticks));
+}
+
+public void ArrayElemntAccessTime(int size)
 {
 	DateTime d1 = DateTime.Now;
 	int[] l = new int[size];
@@ -18,25 +43,25 @@ public void ArrayElemntAccessTime(int size)
 	}
 	Console.WriteLine("Gen And Pupulate Array: " + (DateTime.Now.Ticks - d1.Ticks));
 	Console.WriteLine("Gen And Pupulate Array: " + new TimeSpan(DateTime.Now.Ticks - d1.Ticks).Milliseconds);
-	
+
 	DateTime d2 = DateTime.Now;
 	int t1 = l[1];
 	Console.WriteLine("GetLowElement: " + (DateTime.Now.Ticks - d2.Ticks));
-	
+
 	DateTime d3 = DateTime.Now;
 	int t2 = l[size - 10];
 	Console.WriteLine("GetHighElement: " + (DateTime.Now.Ticks - d3.Ticks));
-	
+
 	DateTime d4 = DateTime.Now;
 	l[1] = t2;
 	Console.WriteLine("SetLowElement: " + (DateTime.Now.Ticks - d4.Ticks));
-	
+
 	DateTime d5 = DateTime.Now;
 	l[size - 10] = t1;
 	Console.WriteLine("SetHighElement: " + (DateTime.Now.Ticks - d5.Ticks));
 }
 
-public void ArrayVsList(int size) 
+public void ArrayVsList(int size)
 {
 	DateTime d2 = DateTime.Now;
 	int[] i2 = new int[size];

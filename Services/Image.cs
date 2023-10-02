@@ -1,59 +1,38 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 public class Image
 {
-	private Pixel[,] _Data;
+	private byte[,] _Data;
 	private readonly uint Size = 0;
+	private ushort Width = 0;
+	private ushort Height = 0;
+	private uint PixelAmount = 0;
 
-	public ushort Width = 0;
-	public ushort Height = 0;
+	private int PixelSkip = 4; // more pixel skiped -> faster -> blured
 
 	public Image(byte[] byteArray, ushort width)
 	{
-
 		Stopwatch toCompleteTimer = new Stopwatch();
 		toCompleteTimer.Start();
 
 		Size = (uint)byteArray.Length;
+		PixelAmount = Size / 4;
 		Width = width;
 		Height = (ushort)(byteArray.Length / 4 / Width);
 		Console.WriteLine("Image Size: " + byteArray.Length + "byte");
 		Console.WriteLine("Width: " + Width + "px");
 		Console.WriteLine("Height: " + Height + "px");
 
-		_Data = new Pixel[Width, Height];
-
-		ushort widthCounter = 0;
-		ushort heightCounter = 0;
-
-		for (int i = 0; i < byteArray.Length; i += 4)
+		_Data = new byte[PixelAmount, 4];
+		for (int i = 0; i < PixelAmount; i += PixelSkip)
 		{
-
-			byte[] subChunk = new byte[4];
-			subChunk[0] = byteArray[i];
-			subChunk[1] = byteArray[i + 1];
-			subChunk[2] = byteArray[i + 2];
-			subChunk[3] = byteArray[i + 3];
-			Pixel pixel = new(subChunk);
-
-			//Console.WriteLine($"Add Pixel At: {widthCounter},{heightCounter} : {pixel.Print()}");
-			//Console.WriteLine($"PixelLeft: {byteArray.Length - i}");
-
-			_Data[heightCounter, widthCounter] = pixel;
-
-			widthCounter++;
-			if (widthCounter == Width)
-			{
-				widthCounter = 0;
-				heightCounter++;
-			}
-		};
-
-		Console.WriteLine($"D: " + toCompleteTimer.ElapsedMilliseconds + "ms");
+			_Data[i, 0] = byteArray[i * 4];
+			_Data[i, 1] = byteArray[(i * 4) + 1];
+			_Data[i, 2] = byteArray[(i * 4) + 2];
+			_Data[i, 3] = byteArray[(i * 4) + 3];
+		}
+		Console.WriteLine($"SetUp: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 	}
 
 	public void GetContrast()
@@ -61,36 +40,26 @@ public class Image
 		Stopwatch toCompleteTimer = new Stopwatch();
 		toCompleteTimer.Start();
 
-		for (int i = 0; i < Width; i++)
+		for (int i = 0; i < PixelAmount;  i += PixelSkip)
 		{
-			for (int j = 0; j < Height; j++)
+			Pixel pixel = new(_Data[i, 0], _Data[i, 1], _Data[i, 2], _Data[i, 3]);
+			byte avg = pixel.GetAvgWthoutAlpha();
+			if (avg > 127)
 			{
-				if (_Data[i, j] != null)
-				{
-					byte avgColor = _Data[i, j].GetAvgWthoutAlpha();
-					if (avgColor > 127)
-						_Data[i, j].SetColor(255, 255, 255, 255);
-					else
-						_Data[i, j].SetColor(0, 0, 0, 255);
-				}
+				_Data[i, 0] = 255;
+				_Data[i, 1] = 255;
+				_Data[i, 2] = 255;
+				_Data[i, 3] = 255;
+			}
+			else
+			{
+				_Data[i, 0] = 0;
+				_Data[i, 1] = 0;
+				_Data[i, 2] = 0;
+				_Data[i, 3] = 255;
 			}
 		}
-
 		Console.WriteLine($"GC: " + toCompleteTimer.ElapsedMilliseconds + "ms");
-	}
-
-	public void Print()
-	{
-		for (int i = 0; i < Width; i++)
-		{
-			for (int j = 0; j < Height; j++)
-			{
-				if (_Data[i, j] != null)
-				{
-					Console.WriteLine($"PIXEL R{_Data[i, j].R} G{_Data[i, j].G} B{_Data[i, j].B} A{_Data[i, j].A}");
-				}
-			}
-		}
 	}
 
 	public byte[] GetByteArray()
@@ -99,39 +68,15 @@ public class Image
 		toCompleteTimer.Start();
 
 		byte[] byteArray = new byte[Size];
-		int byteIndex = 0;
 
-		for (int i = 0; i < Width; i++)
+		for (int i = 0; i < PixelAmount; i += PixelSkip)
 		{
-			for (int j = 0; j < Height; j++)
-			{
-				if (_Data[i, j] != null)
-				{
-					byteArray[byteIndex] = _Data[i, j].R;
-					byteArray[byteIndex + 1] = _Data[i, j].G;
-					byteArray[byteIndex + 2] = _Data[i, j].B;
-					byteArray[byteIndex + 3] = _Data[i, j].A;
-				}
-				else
-				{
-					byteArray[byteIndex] = 255;
-					byteArray[byteIndex + 1] = 255;
-					byteArray[byteIndex + 2] = 255;
-					byteArray[byteIndex + 3] = 255;
-				}
-				byteIndex += 4;
-			}
+			byteArray[i * 4] = _Data[i, 0];
+			byteArray[(i * 4) + 1] = _Data[i, 1];
+			byteArray[(i * 4) + 2] = _Data[i, 2];
+			byteArray[(i * 4) + 3] = _Data[i, 3];
 		}
-
-		Console.WriteLine($"BA: " + toCompleteTimer.ElapsedMilliseconds + "ms");
+		Console.WriteLine($"GC: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 		return byteArray;
-
 	}
-
-	/// <summary>
-	/// //////////////////////////////////////////////////////////////////////////////////
-	/// </summary>
-
-
-	// You can define other methods, fields, classes and namespaces here
 }
