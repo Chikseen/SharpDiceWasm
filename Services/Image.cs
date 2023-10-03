@@ -3,13 +3,18 @@ using System.Diagnostics;
 
 public class Image
 {
+	// preCompileConfig
+	const int PixelSkip = 1; // more pixel skiped -> faster -> blured
+
+	const int CornerCheckRadius = 8; // Padding to borders -> more pixel -> more accuracy -> more time
+
+
+	// RunTimeVar
 	private byte[,] _Data;
 	private readonly uint Size = 0;
 	private ushort Width = 0;
 	private ushort Height = 0;
 	private uint PixelAmount = 0;
-
-	private int PixelSkip = 4; // more pixel skiped -> faster -> blured
 
 	public Image(byte[] byteArray, ushort width)
 	{
@@ -40,7 +45,7 @@ public class Image
 		Stopwatch toCompleteTimer = new Stopwatch();
 		toCompleteTimer.Start();
 
-		for (int i = 0; i < PixelAmount;  i += PixelSkip)
+		for (int i = 0; i < PixelAmount; i += PixelSkip)
 		{
 			Pixel pixel = new(_Data[i, 0], _Data[i, 1], _Data[i, 2], _Data[i, 3]);
 			byte avg = pixel.GetAvgWthoutAlpha();
@@ -60,6 +65,75 @@ public class Image
 			}
 		}
 		Console.WriteLine($"GC: " + toCompleteTimer.ElapsedMilliseconds + "ms");
+	}
+
+	public void GetCorners()
+	{
+		Stopwatch toCompleteTimer = new Stopwatch();
+		toCompleteTimer.Start();
+
+		// Loop Every Pixel
+		for (int index = 0; index < PixelAmount; index += PixelSkip + CornerCheckRadius)
+		{
+			int x = index / Width;
+			int y = index % Width;
+
+			// Check if Pixel is in X Bounds
+			if (x > CornerCheckRadius && x < (Width - CornerCheckRadius))
+			{
+				// Check if Pixel is in Y Bounds
+				if (y > CornerCheckRadius && y < (Width - CornerCheckRadius))
+				{
+					int darkCounter = 0;
+					int lightCounter = 0;
+					// Get Every Pixel in certain Radius
+					for (int i = 0 - CornerCheckRadius; i < CornerCheckRadius; i++)
+					{
+						for (int j = 0 - CornerCheckRadius; j < CornerCheckRadius; j++)
+						{
+							int xOffset = x + i;
+							int yOffset = (Width * y) + (Width * j);
+							int byteArrayOffset = xOffset + yOffset;
+
+							Pixel pixel = new(_Data[byteArrayOffset, 0], _Data[byteArrayOffset, 1], _Data[byteArrayOffset, 2], _Data[byteArrayOffset, 3]);
+							byte avg = pixel.GetAvgWthoutAlpha();
+							if (avg > 127)
+							{
+								darkCounter++;
+							}
+							else
+							{
+								lightCounter++;
+							}
+						}
+					}
+
+					double darkPrecentage = darkCounter / (double)(darkCounter + lightCounter) * 100d;
+
+
+					if (darkPrecentage > 0d && darkPrecentage < 1d)
+					{
+						Console.WriteLine(darkPrecentage);
+						for (int i = 0 - CornerCheckRadius; i < CornerCheckRadius; i++)
+						{
+							for (int j = 0 - CornerCheckRadius; j < CornerCheckRadius; j++)
+							{
+								int xOffset = x + i;
+								int yOffset = (Width * y) + (Width * j);
+								int byteArrayOffset = xOffset + yOffset;
+
+								_Data[byteArrayOffset, 0] = 255;
+								_Data[byteArrayOffset, 1] = 0;
+								_Data[byteArrayOffset, 2] = 0;
+								_Data[byteArrayOffset, 3] = 255;
+							}
+						}
+					}
+				}
+			}
+
+		}
+		Console.WriteLine($"Corners: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 	}
 
 	public byte[] GetByteArray()

@@ -1,6 +1,6 @@
 using System;
 
-public class Pixel
+public class Pixel : IDisposable
 {
 	public byte R = 0;
 	public byte G = 0;
@@ -44,4 +44,7 @@ public class Pixel
 	{
 		return $"R{R} G{G} B{B} A{A}";
 	}
+
+	public void Dispose()
+	{ }
 }

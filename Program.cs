@@ -16,7 +16,8 @@ public partial class Main
 			toCompleteTimer.Start();
 
 			Image image = new(byteArray, (ushort)width);
-			image.GetContrast();
+			//image.GetContrast();
+			image.GetCorners();
 
 			Console.WriteLine($"All: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 			return image.GetByteArray();

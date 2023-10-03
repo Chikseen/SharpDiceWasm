@@ -71,5 +71,5 @@ async function save() {
 	framesPerSec++;
 	framesPerSec = ((new Date() - started) / framesPerSec).toFixed(0);
 	document.getElementById("fps").innerHTML = framesPerSec;
-	setTimeout(save, 1);
+	//setTimeout(save, 1);
 }
