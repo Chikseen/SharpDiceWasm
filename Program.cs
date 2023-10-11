@@ -17,7 +17,7 @@ public partial class Main
 
 			Image image = new(byteArray, (ushort)width);
 			//image.GetContrast();
-			image.GetCorners();
+			image.GetDices();
 
 			Console.WriteLine($"All: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 			return image.GetByteArray();
