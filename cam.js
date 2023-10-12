@@ -60,5 +60,5 @@ function save() {
 	const timeToCompleteEnd = performance.now();
 	document.getElementById("fps").innerHTML = (timeToCompleteEnd - timeToCompleteStart).toFixed(0) + " ms";
 
-	setTimeout(save, 0);
+	//setTimeout(save, 0);
 }

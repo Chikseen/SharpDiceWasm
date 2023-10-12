@@ -1,18 +1,21 @@
 using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Numerics;
 
 public class Image
 {
 	// preCompileConfig
 	const int _pixelSkip = 1; // more pixel skiped -> faster -> blured
 	const int _maxDiceDotHeight = 10; // more pixel skiped -> faster -> blured
-	const bool _isDebugMode = true;
+	const bool _isDebugMode = false;
 
 	// RunTimeVar
 	private byte[] _data;
 	private readonly uint _size = 0;
 	private int _width = 0;
 	private int _height = 0;
+
 
 	public Image(byte[] byteArray, int width)
 	{
@@ -30,7 +33,7 @@ public class Image
 		Console.WriteLine($"SetUp: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 	}
 
-	public void GetDices()
+	public Positions GetDices()
 	{
 		Stopwatch toCompleteTimer = new Stopwatch();
 		toCompleteTimer.Start();
@@ -38,6 +41,7 @@ public class Image
 		// Loop Every Pixel
 		int negativeDiceDotHeight = _maxDiceDotHeight / 4;
 		int pixelCheckHeight = _maxDiceDotHeight + negativeDiceDotHeight;
+		Positions positions = new();
 
 		for (int index = 0; index < _size; index += 4 * _pixelSkip)
 		{
@@ -55,7 +59,7 @@ public class Image
 				if (y + _maxDiceDotHeight < _height && y - negativeDiceDotHeight > 0)
 				{
 					// Check Dimensions x pixel Downwards
-					int plackPixelCounter = 0;
+					int blackPixelCounter = 0;
 					bool[] isDot = new bool[pixelCheckHeight];
 
 					// get negtaive Y Pixels and some below it to create line to check 
@@ -67,7 +71,7 @@ public class Image
 						int cAvg = cPixel.GetAvgWthoutAlpha();
 						if (cAvg < 100)
 						{
-							plackPixelCounter++;
+							blackPixelCounter++;
 							isDot[i + negativeDiceDotHeight] = false;
 						}
 						else
@@ -76,25 +80,43 @@ public class Image
 						}
 					}
 
-					if (_isDebugMode)
+					// check for correct Pattern
+					if (blackPixelCounter > 5 && isDot[0] == true && isDot[pixelCheckHeight - 1] == true)
 					{
-						if (plackPixelCounter > 5 && isDot[0] == true && isDot[pixelCheckHeight - 1] == true)
+						if (positions.PositionList.Count > 0)
 						{
-							// DRAW DEBUG LINE
-							for (int i = -negativeDiceDotHeight; i < _maxDiceDotHeight; i++)
+							float distance = positions.GetDistanceToNearestPos(x, y);
+
+							if (distance > 3)
 							{
-								int pixelPosInArray = ((y + i) * _width * 4) + (x * 4);
-								_data[pixelPosInArray] = 255;
-								_data[pixelPosInArray + 1] = 0;
-								_data[pixelPosInArray + 2] = 0;
-								_data[pixelPosInArray + 3] = 255;
+								positions.PositionList.Add(new(x, y));
+
+								if (_isDebugMode)
+								{
+									// DRAW DEBUG LINE
+									for (int i = -negativeDiceDotHeight; i < _maxDiceDotHeight; i++)
+									{
+										int pixelPosInArray = ((y + i) * _width * 4) + (x * 4);
+										_data[pixelPosInArray] = 255;
+										_data[pixelPosInArray + 1] = 0;
+										_data[pixelPosInArray + 2] = 0;
+										_data[pixelPosInArray + 3] = 255;
+									}
+								}
 							}
 						}
+						else
+						{
+							positions.PositionList.Add(new(x, y));
+						}
+
+
 					}
 				}
 			}
 		}
 		Console.WriteLine($"DiceLogic: " + toCompleteTimer.ElapsedMilliseconds + "ms");
+		return positions;
 	}
 
 	public byte[] GetByteArray()

@@ -16,8 +16,14 @@ public partial class Main
 			toCompleteTimer.Start();
 
 			Image image = new(byteArray, (ushort)width);
-			//image.GetContrast();
-			image.GetDices();
+			Positions positions = image.GetDices();
+
+			var t = positions.GetClusterAndNumber(positions);
+			Console.WriteLine("Start");
+			foreach (var item in t)
+			{
+				Console.WriteLine(item);
+			}
 
 			Console.WriteLine($"All: " + toCompleteTimer.ElapsedMilliseconds + "ms");
 			return image.GetByteArray();
