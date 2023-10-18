@@ -1,4 +1,6 @@
+using System.Collections.Generic;
+
 public static class State
 {
-	public static Positions DicePositions { get; set; }
+	public static List<int> Dices { get; set; }
 }

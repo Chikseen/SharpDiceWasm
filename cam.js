@@ -35,6 +35,7 @@ canvasInterval = window.setInterval(() => {
 }, 1000 / fps);
 
 ///////////////////////////////
+let counter = 0;
 function save() {
 	const timeToCompleteStart = performance.now();
 	const canvas = document.getElementById("mainCanvas");
@@ -57,8 +58,15 @@ function save() {
 	overlayCtx.putImageData(imageData, 0, 0);
 
 	// FPS DISPLAY
+	counter++;
 	const timeToCompleteEnd = performance.now();
 	document.getElementById("fps").innerHTML = (timeToCompleteEnd - timeToCompleteStart).toFixed(0) + " ms";
+	document.getElementById("counter").innerHTML = counter;
 
-	//setTimeout(save, 0);
+	const dices = exports.Main.GetState();
+	document.getElementById("dices").innerHTML = dices.sort().join(" - ");
+
+	console.log(dices);
+
+	setTimeout(save, 0);
 }

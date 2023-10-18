@@ -34,38 +34,4 @@ public class Positions
 		}
 		return minPos;
 	}
-
-	public List<int> GetClusterAndNumber(Positions data)
-	{
-		List<int> response = new();
-		List<Vector2> positionList = data.PositionList;
-
-		while (positionList.Count > 0)
-		{
-			int eyeCount = 1;
-			Vector2 position = positionList.First();
-			positionList.RemoveAt(0);
-
-			eyeCount += CountPossibleNeighbor(positionList, position);
-			response.Add(eyeCount);
-		}
-
-		return response;
-	}
-
-	private int CountPossibleNeighbor(List<Vector2> positionList, Vector2 position)
-	{
-		Vector2 nearestPos = GetNearestPos(positionList, position.X, position.Y);
-		float distance = Vector2.Distance(position, nearestPos);
-		if (distance < 0)
-		{
-			positionList.Remove(nearestPos);
-			Console.WriteLine("here");
-			return 1 + CountPossibleNeighbor(positionList, nearestPos);
-		}
-		else
-		{
-			return 0;
-		}
-	}
 }
